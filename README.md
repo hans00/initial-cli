@@ -34,9 +34,9 @@ initial <short name>/<owner>/<slug> <project name>
 
 ```json
 {
-	"short_name": {
-		"private-git": "https://example.com/{owner}/{slug}.git"
-	}
+    "short_name": {
+        "private-git": "https://example.com/{owner}/{slug}.git"
+    }
 }
 ```
 
@@ -58,10 +58,10 @@ initial <short name>/<owner>/<slug> <project name>
 ```js
 // you can require: fs, path, glob, rimraf, and other core modules
 exports.questions = [
-	{} // your questions, see: Inquirer.js
+    {} // your questions, see: Inquirer.js
 ];
 exports.preprocess = function (answer) {
-	// the JS codes
-	// you can copy the file from assets
+    // the JS codes
+    // you can copy the file from assets
 }
 ```
