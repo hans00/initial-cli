@@ -7,12 +7,13 @@ import path from 'path'
 import glob from 'glob'
 import template_process from './template_process'
 
-export default function (git_repo, project_path) {
+export default function (git_repo, project_name) {
+	const project_path = path.resolve(project_name)
 	const init_file = path.resolve(project_path, '.init.js')
 	const init_assets = path.resolve(project_path, '.init-assets')
 
 	let confirm = []
-	if (fs.existsSync(project_path)) {
+	if (fs.existsSync(project_name)) {
 		confirm.push({
 			type: 'confirm',
 			name: 'remove_old',
@@ -26,7 +27,7 @@ export default function (git_repo, project_path) {
 	.then((result) => {
 		if ('remove_old' in result) {
 			if (result.remove_old) {
-				rimraf.sync(project_path)
+				rimraf.sync(project_name)
 			} else {
 				process.exit(0)
 			}
@@ -34,7 +35,7 @@ export default function (git_repo, project_path) {
 	})
 	.then(() => {
 		return new Promise((resolve, reject) => {
-			const git_clone = spawn('git', ['clone', git_repo, project_path])
+			const git_clone = spawn('git', ['clone', git_repo, project_name])
 			git_clone.stdout.on('data', (data) => {
 				console.log(data)
 			})
@@ -43,7 +44,7 @@ export default function (git_repo, project_path) {
 			})
 			git_clone.on('close', (code) => {
 				if (code == 0) {
-					rimraf.sync(path.join(project_path, '.git'))
+					rimraf.sync(path.join(project_name, '.git'))
 					resolve()
 				} else {
 					reject()
@@ -62,7 +63,8 @@ export default function (git_repo, project_path) {
 	.then((questions) => prompt(questions))
 	.then((result) => {
 		global.user_input = result
-		global.user_input.project_name = project_path
+		global.user_input.project_name = project_name
+		process.chdir(project_path)
 		const init = require(init_file)
 		if (init.preprocess) {
 			return init.preprocess(result)
@@ -94,7 +96,9 @@ export default function (git_repo, project_path) {
 			})
 		})
 	})
-	.then(() => console.log(chalk.green('Well, all done.')))
+	.then(() => {
+		console.log(chalk.green('Well, all done.'))
+	})
 	.catch((e) => {
 		console.error(chalk.red(e))
 		process.exit(1)
