@@ -65,3 +65,29 @@ exports.preprocess = function (answer) {
     // you can copy the file from assets
 }
 ```
+
+### Template files
+
+> All `*.*` file except `.init.js` or under `.init-assets`
+> 
+> All question answer and project_name will pass into the template processor.
+
+Usage
+
+```js
+// direct output variable using syntax as %var_name%
+title = "%project_name%"
+// boolean condition
+#if boolVal#
+#endif#
+#if boolVar eq true#
+#endif#
+// string condition
+#if strVar eq 'value'#
+#endif#
+#if strVar ne 'value'#
+#endif#
+// list condition
+#if listVar has 'value'#
+#endif#
+```

@@ -9,6 +9,7 @@ import template_process from './template_process'
 
 export default function (git_repo, project_path) {
 	const init_file = path.resolve(project_path, '.init.js')
+	const init_assets = path.resolve(project_path, '.init-assets')
 
 	let confirm = []
 	if (fs.existsSync(project_path)) {
@@ -61,6 +62,7 @@ export default function (git_repo, project_path) {
 	.then((questions) => prompt(questions))
 	.then((result) => {
 		global.user_input = result
+		global.user_input.project_name = project_path
 		const init = require(init_file)
 		if (init.preprocess) {
 			return init.preprocess(result)
@@ -69,8 +71,8 @@ export default function (git_repo, project_path) {
 		}
 	})
 	.then(() => {
-		rimraf.sync(path.join(project_path, '.init-assets'))
-		rimraf.sync(path.join(project_path, '.init.js'))
+		rimraf.sync(init_assets)
+		rimraf.sync(init_file)
 		return
 	})
 	.then(() => {
@@ -78,6 +80,9 @@ export default function (git_repo, project_path) {
 			glob(path.join(project_path, '**/*.*'), (err, files) => {
 				if (err) reject(err)
 				files.forEach((file) => {
+					if (file == init_assets || file == init_file) {
+						return
+					}
 					const content = fs.readFileSync(file, 'utf8')
 					try {
 						fs.writeFileSync(file, template_process(content, global.user_input), 'utf8')

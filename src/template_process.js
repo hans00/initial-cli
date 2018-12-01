@@ -4,7 +4,7 @@ function replaceRange(s, start, end, substitute) {
 
 function template_process(template, variables) {
 	const ECHO_EXP = /\%([A-Za-z_][A-Za-z0-9_]+)\%/
-	const IF_EXP = /\#if +([A-Za-z_][A-Za-z0-9_]+)(?: +(eq|ne) +(\'[^']*\'|"[^"]*"|true|false|\d+(?:\.\d+)?))?\#/
+	const IF_EXP = /\#if +([A-Za-z_][A-Za-z0-9_]+)(?: +(eq|ne|has) +(\'[^']*\'|"[^"]*"|true|false|\d+(?:\.\d+)?))?\#/
 	const ENDIF_EXP = /\#endif\#/
 	let match
 	// process echo
@@ -53,6 +53,13 @@ function template_process(template, variables) {
 			} else if (condition_op == 'ne') {
 				const condition_ne = eval(condition_match)
 				if (variables[condition_var] != condition_ne) {
+					template = replaceRange(template, start, end_of_block, content_of_block)
+				} else {
+					template = replaceRange(template, start, end_of_block, '')
+				}
+			} else if (condition_op == 'has') {
+				const condition_has = eval(condition_match)
+				if (variables[condition_var].includes(condition_has)) {
 					template = replaceRange(template, start, end_of_block, content_of_block)
 				} else {
 					template = replaceRange(template, start, end_of_block, '')
