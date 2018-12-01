@@ -57,7 +57,7 @@ function template_process(template, variables) {
 			let prev_end = end
 			let nest_count = 1
 			while (next_match = IF_EXP.exec(template.slice(prev_end))) {
-				endif_match = ENDIF_EXP.exec(template.slice(prev_end, next_match.index))
+				endif_match = ENDIF_EXP.exec(template.slice(prev_end, prev_end+next_match.index))
 				if (endif_match) {
 					break
 				} else {

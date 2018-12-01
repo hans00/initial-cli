@@ -1,6 +1,6 @@
 {
   "name": "initial-cli",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Initialize project command",
   "main": "dist/index.js",
   "bin": {
