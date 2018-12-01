@@ -31,11 +31,11 @@ function parse_source_info(arg, source_list) {
 	}
 }
 
-export default function (argv, config={}) {
+export default function (argv, {short_name={}, alias={}}) {
 	let source_url = null
 	let project_path = null
-	config.github = GITHUB_URL
-	config.gitlab = GITLAB_URL
+	short_name.github = GITHUB_URL
+	short_name.gitlab = GITLAB_URL
 	try {
 		if (argv.length == 0) {
 			throw ""
@@ -44,10 +44,13 @@ export default function (argv, config={}) {
 		} else if (argv.length > 2) {
 			throw "Arguments too many."
 		}
+		if (argv[0] in alias) {
+			argv[0] = alias[argv[0]]
+		}
 		if (/^(git|https?):\/\/([a-z0-9-]+\.)+[a-z0-9-]+\/[\w-]+\/[\w-]+(.git)?$/i.test(argv[0])) {
 			source_url = argv[0]
 		} else {
-			source_url = parse_source_info(argv[0], config)
+			source_url = parse_source_info(argv[0], short_name)
 		}
 		project_path = argv[1]
 		create(source_url, project_path)

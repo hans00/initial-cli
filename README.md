@@ -36,6 +36,9 @@ initial <short name>/<owner>/<slug> <project name>
 {
     "short_name": {
         "private-git": "https://example.com/{owner}/{slug}.git"
+    },
+    "alias": {
+    	"example": "private-git/owner/template"
     }
 }
 ```
