@@ -11,6 +11,12 @@ function replaceRange(s, start, end, substitute) {
 		}
 		return s.substring(0, start) + s.substring(end)
 	} else {
+		if (substitute.slice(0,1) == '\n') {
+			substitute = substitute.slice(1)
+		}
+		if (substitute.slice(-1) == '\n') {
+			substitute = substitute.slice(0,-1)
+		}
 		return s.substring(0, start) + substitute + s.substring(end)
 	}
 }
@@ -42,13 +48,38 @@ function template_process(template, variables) {
 		const condition_op = match[2]
 		const condition_match = match[3]
 		const end = match.index + match[0].length
-		const endif_match = ENDIF_EXP.exec(template.slice(end))
-		if (!endif_match) {
-			throw "The if block does not end!"
-		}
-		const content_of_block = template.slice(end, end + endif_match.index)
 		let start_of_block = match.index
-		let end_of_block = end + endif_match.index + endif_match[0].length
+		let end_of_block
+		let content_of_block
+		let endif_match
+		let next_match
+		if (IF_EXP.exec(template.slice(end))) {
+			let prev_end = end
+			let nest_count = 1
+			while (next_match = IF_EXP.exec(template.slice(prev_end))) {
+				endif_match = ENDIF_EXP.exec(template.slice(prev_end, next_match.index))
+				if (endif_match) {
+					break
+				} else {
+					prev_end += next_match.index + next_match[0].length
+					nest_count += 1
+				}
+			}
+			while (nest_count--) {
+				if (endif_match = ENDIF_EXP.exec(template.slice(prev_end))) {
+					prev_end += endif_match.index + endif_match[0].length
+				} else {
+					throw "If block does not end."
+				}
+			}
+			content_of_block = template.slice(end, prev_end - endif_match[0].length)
+			end_of_block = prev_end
+		} else if (endif_match = ENDIF_EXP.exec(template.slice(end))) {
+			content_of_block = template.slice(end, end + endif_match.index)
+			end_of_block = end + endif_match.index + endif_match[0].length
+		} else {
+			throw "If block does not end."
+		}
 		if (condition_var in variables) {
 			if (!condition_op) {
 				if (variables[condition_var]) {
