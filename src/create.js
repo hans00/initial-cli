@@ -7,7 +7,7 @@ import path from 'path'
 import glob from 'glob'
 import template_process from './template_process'
 
-export default function (git_repo, project_name) {
+export default function (git_repo, branch, project_name) {
 	const project_path = path.resolve(project_name)
 	const init_file = path.resolve(project_path, '.init.js')
 	const init_assets = path.resolve(project_path, '.init-assets')
@@ -35,7 +35,13 @@ export default function (git_repo, project_name) {
 	})
 	.then(() => {
 		return new Promise((resolve, reject) => {
-			const git_clone = spawn('git', ['clone', git_repo, project_name])
+			let args = ['clone', git_repo]
+			if (branch) {
+				args.push('-b')
+				args.push(branch)
+			}
+			args.push(project_name)
+			const git_clone = spawn('git', args)
 			git_clone.stdout.on('data', (data) => {
 				console.log(data)
 			})

@@ -9,23 +9,21 @@ A project initializer.
 ### from GitHub
 
 ```sh
-initial <owner>/<slug> <project name>
-// or
-initial github/<owner>/<slug> <project name>
+initial [github/]<owner>/<slug>[#branch] <project name>
 ```
 
 ### from GitLab
 
 ```sh
-initial gitlab/<owner>/<slug> <project name>
+initial gitlab/<owner>/<slug>[#branch] <project name>
 ```
 
 ### from other git repo
 
 ```sh
-initial <git repo url> <project name>
+initial <git repo url>[#branch] <project name>
 // or pre-set short name
-initial <short name>/<owner>/<slug> <project name>
+initial <short name>/<owner>/<slug>[#branch] <project name>
 ```
 
 ### alias git repo
