@@ -28,6 +28,14 @@ initial <git repo url> <project name>
 initial <short name>/<owner>/<slug> <project name>
 ```
 
+### alias git repo
+
+> Edit the configure file before use this.
+
+```sh
+initial <alias name> <project name>
+```
+
 ### Configure file
 
 #### `$HOME`/.init/config.json
