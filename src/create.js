@@ -1,7 +1,7 @@
 import {spawn} from 'child_process'
 import chalk from 'chalk'
-import fs from 'fs'
 import rimraf from 'rimraf'
+import fs from 'fs-extra'
 import inquirer from 'inquirer'
 import path from 'path'
 import glob from 'glob'
@@ -12,8 +12,12 @@ export default function (git_repo, branch, project_name) {
 	const init_file = path.resolve(project_path, '.init.js')
 	const init_assets = path.resolve(project_path, '.init-assets')
 
+	if (project_name == '.') {
+		project_name = project_path.split(/.*[\/|\\]/)[1]
+	}
+
 	let confirm = []
-	if (fs.existsSync(project_name)) {
+	if (fs.existsSync(project_path)) {
 		confirm.push({
 			type: 'confirm',
 			name: 'remove_old',
@@ -27,7 +31,8 @@ export default function (git_repo, branch, project_name) {
 	.then((result) => {
 		if ('remove_old' in result) {
 			if (result.remove_old) {
-				rimraf.sync(project_name)
+				rimraf.sync(path.resolve(project_path, '*'))
+				rimraf.sync(path.resolve(project_path, '.*'))
 			} else {
 				process.exit(0)
 			}
@@ -40,7 +45,7 @@ export default function (git_repo, branch, project_name) {
 				args.push('-b')
 				args.push(branch)
 			}
-			args.push(project_name)
+			args.push(project_path)
 			const git_clone = spawn('git', args)
 			git_clone.stdout.on('data', (data) => {
 				console.log(data)
@@ -73,7 +78,10 @@ export default function (git_repo, branch, project_name) {
 		process.chdir(project_path)
 		const init = require(init_file)
 		if (init.preprocess) {
-			return init.preprocess(result)
+			return init.preprocess(result, {
+				rm: rimraf.sync,
+				copy: fs.copySync
+			})
 		} else {
 			return
 		}

@@ -69,9 +69,11 @@ initial <alias name> <project name>
 exports.questions = [
     {} // your questions, see: Inquirer.js
 ];
-exports.preprocess = function (answer) {
+exports.preprocess = function (answer, module) {
     // the JS codes
     // you can copy the file from assets
+    // module.rm => rimraf.sync
+    // module.copy => fs.copySync
 }
 ```
 
